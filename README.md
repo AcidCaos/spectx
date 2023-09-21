@@ -1,4 +1,4 @@
-A SpectX version tracker, v1.4.83 patch, license generator and platform adaptation.
+A SpectX version tracker, v1.4.83 patch, license generator, platform adaptation and Docker build.
 
 ## SpectX Versions
 
@@ -20,7 +20,7 @@ A SpectX version tracker, v1.4.83 patch, license generator and platform adaptati
 
 ## Patching v1.4.83
 Procedure:
-- SpectX v1.4.83 Desktop should be installed, or at least have the spectx.jar file.
+- SpectX v1.4.83 Desktop should be installed, or at least have the `spectx.jar` file.
 - Locate `lib/spectx.jar` in the installation directory and place the `com` folder and the `patch.bat` file next to it:<br>
   ```
   lib/
@@ -208,3 +208,28 @@ Steps to include SQL Libraries for other platforms:
     java -jar spectx.jar
     ```
 This changes have proven to be enough for the tested versions.
+
+## Docker build
+
+Having SpectX on Docker is convenient.
+By default, SpectX Desktop versions listen to `localhost`, and it cannot be changed to `0.0.0.0` or other values, not even modifying `wgui.host` at `sx.conf`, since it's supposed to be used as a Desktop tool, not served.
+Instead, the traffic is proxied through Nginx so that the WebUI can be accessed from outside the Docker container.
+
+:information_source: Beware that Desktop edition limitations still apply (limited Processing units, etc.) even when changing platforms.
+
+### Instructions
+To build a SpectX Docker image, follow this instructions:
+- Get the provided docker files.
+- Obtain or adapt a Linux `lib/spectx.jar` and `conf/sx.conf` files and place them accordingly:
+  ```
+  docker/
+  ├─ Dockerfile
+  ├─ conf/
+  |  └─ sx.conf
+  ├─ lib/
+  |  └─ spectx.jar
+  └─ nginx/
+     └─ spectx.conf
+  ```
+- Change directory into `docker` and build the docker image: `docker build --tag spectx:latest .`.
+- By default, the SpectX WebUI is published through the Nginx port 80.
