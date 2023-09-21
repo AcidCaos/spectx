@@ -1,7 +1,26 @@
-A SpectX v1.4.83 patch and license generator
+A SpectX version tracker, v1.4.83 patch, license generator and platform adaptation.
 
-## Patching Procedure
-- SpectX v1.4.83 Desktop should be installed.
+## SpectX Versions
+
+| Version | Release date | Original Installers | Exists Patch |
+|---|---|---|---|
+| 1.4.83 | | Desktop [Windows 64](#private) | Yes (see below) |
+| 1.4.82 | 21 July 2021 | | |
+| 1.4.77 | 16 June 2021 | | |
+| 1.4.75 | | | |
+| 1.4.74 | | | |
+| 1.4.72 | | | |
+| 1.4.68 | 27 November 2020 | | |
+| 1.4.67 | 3 November 2020 | | |
+| 1.4.66 | 15 October 2020 | | |
+| 1.4.64 | 23 September 2020 | | |
+| 1.4.57 | 17 July 2020 | | |
+| 1.4.56 | 29 June 2020 | | |
+| 1.4.53 | | Desktop [OSX 64](https://archive.org/details/spectx-desktop-v1.4.53-osx-64) | No |
+
+## Patching v1.4.83
+Procedure:
+- SpectX v1.4.83 Desktop should be installed, or at least have the spectx.jar file.
 - Locate `lib/spectx.jar` in the installation directory and place the `com` folder and the `patch.bat` file next to it:<br>
   ```
   lib/
@@ -15,7 +34,7 @@ A SpectX v1.4.83 patch and license generator
 - Run `./patch.bat`
 - Generate and apply a license.
 
-## The Patch
+### About the Patch
 
 This is how the patch works:
 
@@ -24,7 +43,7 @@ This is how the patch works:
   - Bypass JAR integrity verification.
   - Bypass License signature verifications (the two of them).
 
-## License file
+## The License file
 The license is wrapped in a PEM-like format: a file containing a Base64 ASCII encoding, with plain-text header and footer:
 ```
 -----BEGIN SPECTX LICENSE-----
@@ -35,9 +54,9 @@ U1hsA...
 ```
 Note that, although the license is in a PEM-like format, its content has nothing to do with X.509 certificates. Any attempt to read it as a PEM certificate file will fail.
 
-### SpectX license file specification
+#### License file specification
 
-Here's the license file format specifications:
+Here's the reversed license format:
 
 ```
 spectx.lic
@@ -157,3 +176,35 @@ System.out.println(licPEM);
 SequentialProperties licPropRead = License.read(licPEM);
 licPropRead.print();
 ```
+
+## JAR platform adaptation
+
+The only thing that prevents a platform-specific version of SpectX JAR from being run onto another platform (OS) is the `sx.conf` file path values format and the SQLite libraries for other platforms not being included.
+We can easily modify those to adapt a JAR from one platform to another.
+
+Steps to adapt config file (example from Windows to Linux/MacOS):
+- Locate and open the configuration file `conf/sx.conf`.
+- Modify the entries ending in `.dir` containing Windows path separators `\\` and change them to Linux/MacOS separators `/`.
+
+Steps to include SQL Libraries for other platforms:
+- Open the `lib/spectx.jar` file with a ZIP file editor.
+- Navigate to `org/sqlite/native`. There should be various directories for different platforms (FreeBSD, Linux, Mac, Windows). Each contains a series of directories for different architectures (aarch64, android-arm, arm, armv6, armv7, ppc64, x86, x86_64). Only the platform for which the JAR is being distributed contains the architecture-specific libraries, whereas the other ones should appear empty.
+- Identify the SQLite JDBC Driver version used on that SpectX version. This can be derived from the existing libraries' file dates, which typically coincide with the SQLite JDBC Driver release date. Attempting to use another version might produce errors due to different.
+  * For Windows Desktop v1.4.83, the `org/sqlite/native/Windows/x86/sqlitejdbc.dll` modification date is 25 May 2018, which coincides with SQLite JDBC [3.23.1](https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.23.1/) released files date.
+  * For OSX Desktop v1.4.53, the `org/sqlite/native/Mac/x86_64/libsqlitejdbc.jnilib` modification date is 25 May 2018 too.
+  * We may assume that all versions in between (namely, at least from 1.4.53 to 1.4.83) might use this same SQLite JDBC version (3.23.1).
+- Download the JAR version for that JDBC version `sqlite-jdbc-x.xx.x.jar` ([3.23.1](https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.23.1/) from Maven repo).
+- Locate in the JDBC JAR the `org/sqlite/native` library files and copy the desired ones back to the `spectx.jar` ZIP.
+- Save the changes done to `spectx.jar`.
+- Finally, run the JAR to check any errors that may appear:
+  * Run from JAR on Windows:
+    ```batch
+    set SPECTX_HOME=.
+    java -jar spectx.jar
+    ```
+  * Run from JAR on GNU/Linux:
+    ```bash
+    export SPECTX_HOME=.
+    java -jar spectx.jar
+    ```
+This changes have proven to be enough for the tested versions.
