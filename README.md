@@ -1,11 +1,11 @@
-A SpectX version tracker, v1.4.83 patch, license generator, platform adaptation and Docker build.
+A SpectX version tracker, patch, license generator, platform adaptation and Docker build.
 
 ## SpectX Versions
 
-| Version | Release date | Original Installers | Exists Patch |
+| Version | Release date | Original Installers and JARs | Patched JARs and files |
 |---|---|---|---|
-| 1.4.83 | | Desktop [Windows 64](#private) | Yes (see below) |
-| 1.4.82 | 21 July 2021 | | |
+| v1.4.83-1-g72d6e4b40 | 16 August 2021 | <b>Desktop Edition</b><br> - :file_cabinet: [Windows 64 Installer](#private)<br> - :coffee: [Windows JAR](#private) | <b>Desktop Edition</b><br> - :coffee: [Windows JAR](#private)<br> - :coffee: [Linux JAR](#private)<br> - :coffee: [OSX JAR](#private)<br> - :coffee: [Universal JAR](#private)<br> - :toolbox: Patch file: `Ak.class` |
+| v1.4.82-1-gbef1e6bb7 | 21 July 2021 | <b>Desktop Edition</b><br> - :coffee: [Windows JAR](#private) | <b>Desktop Edition</b><br> - :coffee: [Universal JAR](#private)<br> - :toolbox: Patch file: `El.class` |
 | 1.4.77 | 16 June 2021 | | |
 | 1.4.75 | | | |
 | 1.4.74 | | | |
@@ -16,7 +16,33 @@ A SpectX version tracker, v1.4.83 patch, license generator, platform adaptation 
 | 1.4.64 | 23 September 2020 | | |
 | 1.4.57 | 17 July 2020 | | |
 | 1.4.56 | 29 June 2020 | | |
-| 1.4.53 | | Desktop [OSX 64](https://archive.org/details/spectx-desktop-v1.4.53-osx-64) | No |
+| 1.4.53 | 24 April 2020 | <b>Desktop Edition</b><br> - :file_cabinet: [OSX 64 Installer](https://archive.org/details/spectx-desktop-v1.4.53-osx-64)<br> - :coffee: [OSX JAR](#private) | |
+
+## Running from the JAR
+
+Set up the SpectX environment like so, with either `spectx.bat` or `spectx.sh` depending on your OS:
+```
+folder/
+├─ spectx.bat
+├─ spectx.sh
+├─ conf/
+|  └─ sx.conf
+└─ lib/
+   └─ spectx.jar
+```
+
+Run from JAR on Windows
+From a batch script (`spectx.bat`):
+```batch
+set SPECTX_HOME=.
+java -jar spectx.jar
+```
+Run from JAR on GNU/Linux
+From a bash script (`spectx.sh`):
+```bash
+export SPECTX_HOME=.
+java -jar spectx.jar
+```
 
 ## Patching v1.4.83
 Procedure:
